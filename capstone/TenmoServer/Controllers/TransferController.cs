@@ -29,15 +29,51 @@ namespace TenmoServer.Controllers
             List<User> returnUsers = userDao.GetOtherUsers(userId);
             return returnUsers;
         }
-        [HttpPost("{id}")]
-        public int SendCash(int id)
+        [HttpPost("{toId}/{money}")]
+        public ActionResult<Transfer> SendCash(int toId, decimal money)
         {
             int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);
+            try
+            {
+                if(userId == toId)
+                {
+                    return StatusCode(400);
+
+                }
+                else if(userDao.GetCash(userId) < money)
+                {
+                    return StatusCode(400);
+                }
+                return userDao.TransferMoney(userId, toId, money);
+
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+                
+            }
+
+            
+        }
+
+        [HttpGet("history")]
+        public List<Transfer> ViewTransfers()
+        {
+
+            int user_Id = Convert.ToInt32(User.FindFirst("sub")?.Value);
+            return userDao.ViewTransfers(user_Id);
 
 
-            throw new NotImplementedException();
-        }    
+        }
+        [HttpGet("{id}")]
+        public Transfer GetTransferById(int id)
+        {
 
+            
+            return userDao.GetTransferById(id);
+
+
+        }
 
     }
 }
