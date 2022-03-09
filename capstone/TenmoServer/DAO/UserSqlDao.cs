@@ -119,5 +119,30 @@ namespace TenmoServer.DAO
 
             return u;
         }
+
+        public decimal GetCash(int user_id)
+        {
+            decimal returnDecimal = 0M;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT balance FROM account WHERE user_id = @user_id;", conn);
+                    cmd.Parameters.AddWithValue("@user_id", user_id);
+                    returnDecimal = Convert.ToDecimal(cmd.ExecuteScalar());
+
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return returnDecimal;
+        }
+
     }
 }
