@@ -174,5 +174,126 @@ namespace TenmoServer.DAO
             return returnDecimal;
         }
 
+        public List<Transfer> ViewTransfers(int user_id)
+        {
+            List<Transfer> transferList = new List<Transfer>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id, account_from, account_to, amount FROM transfer
+                                                    JOIN account ON account.account_id = transfer.account_from OR account.account_id = transfer.account_to
+                                                    WHERE user_id = @user_id
+                                                    ", conn);
+                    cmd.Parameters.AddWithValue("@user_id", user_id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Transfer transfer = GetTransfersFromReader(reader);
+                        transferList.Add(transfer);
+
+                    }
+
+                }
+
+            }
+            catch (SqlException)
+            {
+
+                throw;
+            }
+            return transferList;
+
+        }
+        public Transfer TransferMoney(int fromId, int toId, decimal money)
+        {
+            int transferId;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(@"BEGIN TRANSACTION;
+                                                    INSERT INTO
+                                                    transfer(account_from, account_to, amount, transfer_status_id, transfer_type_id)
+                                                    OUTPUT INSERTED.transfer_id
+                                                    VALUES ((SELECT account_id FROM account WHERE user_id = @fromId), (SELECT account_id FROM account WHERE user_id = @toId), @money, 2, 2);
+                                                    UPDATE account SET balance -= 100 WHERE user_id = @fromId;
+                                                    UPDATE account SET balance += 100 WHERE user_id = @toId;
+                                                    COMMIT;
+                                                    ", conn);
+                    cmd.Parameters.AddWithValue("@fromId", fromId);
+                    cmd.Parameters.AddWithValue("@money", money);
+                    cmd.Parameters.AddWithValue("@toId", toId);
+                    transferId = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    
+                }
+                return GetTransferById(transferId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+        }
+
+
+
+        public Transfer GetTransferById(int transferId)
+        {
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id, account_from, account_to, amount FROM transfer WHERE transfer_id = @transfer_id;", conn);
+                    cmd.Parameters.AddWithValue("@transfer_id", transferId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if(reader.Read())
+                    {
+
+                        return GetTransfersFromReader(reader);
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                    
+
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+        }
+
+        private Transfer GetTransfersFromReader(SqlDataReader reader)
+        {
+
+            Transfer transfer = new Transfer();
+            transfer.Id = Convert.ToInt32(reader["transfer_id"]);
+            transfer.TransferFrom = Convert.ToString(reader["account_from"]);
+            transfer.TransferTo = Convert.ToString(reader["account_to"]);
+            transfer.Amount = Convert.ToDecimal(reader["amount"]);
+
+            return transfer;
+
+        }
+
+
     }
 }

@@ -21,12 +21,14 @@ namespace TenmoServer.Controllers
 
         }
 
-        [HttpGet]
+        [HttpGet("/money")]
         public decimal GetMoney()
         {
             int user_id = Convert.ToInt32(User.FindFirst("sub")?.Value);
             return userDao.GetCash(user_id);
         }
+
+        
 
     }
 }
