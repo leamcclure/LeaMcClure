@@ -29,6 +29,15 @@ namespace TenmoServer.Controllers
 
         }
 
+        [HttpGet]
+        public List<Transfer> ViewTransfers()
+        {
+
+
+
+
+        }
+
     }
 
 

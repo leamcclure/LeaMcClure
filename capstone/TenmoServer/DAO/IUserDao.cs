@@ -10,5 +10,7 @@ namespace TenmoServer.DAO
         List<User> GetUsers();
 
         decimal GetCash(int user_id);
+
+        List<Transfer> ViewTransfers();
     }
 }

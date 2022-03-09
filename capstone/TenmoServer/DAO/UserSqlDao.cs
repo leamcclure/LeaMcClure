@@ -143,6 +143,38 @@ namespace TenmoServer.DAO
 
             return returnDecimal;
         }
+        
+        public List<Transfer> ViewTransfers(int account_id)
+        {
+            List<Transfer> transferList = new List<Transfer>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT transfer_id, account_from, account_to, amount FROM transfer" +
+                                                    "WHERE   ", conn);
+                    cmd.Parameters.AddWithValue("", account_id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+
+
+                }
+
+
+
+            }
+            catch (SqlException)
+            {
+
+                throw;
+            }
+            return transferList;
+
+        }
+
+
 
     }
 }
