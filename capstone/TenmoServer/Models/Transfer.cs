@@ -11,7 +11,7 @@ namespace TenmoServer.Models
 
         public string TransferTo { get; set; }
 
-        public string TransferFrom { get; set;}
+        public string TransferFrom { get; set; }
 
         public decimal Amount { get; set; }
 
@@ -30,3 +30,4 @@ namespace TenmoServer.Models
 
     }
 }
+
