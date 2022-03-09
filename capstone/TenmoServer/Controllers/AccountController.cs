@@ -26,11 +26,7 @@ namespace TenmoServer.Controllers
         {
             int user_id = Convert.ToInt32(User.FindFirst("sub")?.Value);
             return userDao.GetCash(user_id);
-
         }
 
     }
-
-
-
 }
