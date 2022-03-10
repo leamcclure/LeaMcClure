@@ -220,7 +220,7 @@ namespace TenmoServer.DAO
             return transferList;
 
         }
-        public Transfer TransferMoney(int fromId, int toId, decimal money)
+        public Transfer SendMoney(int fromId, int toId, decimal money)
         {
             int transferId;
             try
@@ -233,8 +233,8 @@ namespace TenmoServer.DAO
                                                     transfer(account_from, account_to, amount, transfer_status_id, transfer_type_id)
                                                     OUTPUT INSERTED.transfer_id
                                                     VALUES ((SELECT account_id FROM account WHERE user_id = @fromId), (SELECT account_id FROM account WHERE user_id = @toId), @money, 2, 2);
-                                                    UPDATE account SET balance -= 100 WHERE user_id = @fromId;
-                                                    UPDATE account SET balance += 100 WHERE user_id = @toId;
+                                                    UPDATE account SET balance -= @money WHERE user_id = @fromId;
+                                                    UPDATE account SET balance += @money WHERE user_id = @toId;
                                                     COMMIT;
                                                     ", conn);
                     cmd.Parameters.AddWithValue("@fromId", fromId);

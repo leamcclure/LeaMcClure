@@ -62,12 +62,7 @@ namespace TenmoClient.Services
             {
                 Console.WriteLine($"|  {user.UserId} | {user.Username}");
             } 
-
-
-
-
             Console.WriteLine("| ----------------------------------|");
-
         }
 
 
