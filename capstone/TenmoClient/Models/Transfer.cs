@@ -14,17 +14,19 @@ namespace TenmoClient.Models
         public int TransferFrom { get; set; }
 
         public decimal Amount { get; set; }
+        public string Username { get; set; }
 
         public Transfer()
         {
 
         }
-        public Transfer(int id, int transferTo, int transferFrom, decimal amount)
+        public Transfer(int id, int transferTo, int transferFrom, decimal amount, string username)
         {
             Id = id;
             TransferTo = transferTo;
             TransferFrom = transferFrom;
             Amount = amount;
+            Username = username;
         }
 
 

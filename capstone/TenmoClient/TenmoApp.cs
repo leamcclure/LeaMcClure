@@ -88,9 +88,7 @@ namespace TenmoClient
                 try
                 {
                     List<Transfer> transfers = tenmoApiService.ViewTransfers();
-                    currentConsole.ViewTransfers(transfers, tenmoApiService.UserId);
-                    
-                    
+                    currentConsole.ViewTransfers(transfers, tenmoApiService.UserId);                 
                 }
                 catch
                 {
