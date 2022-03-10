@@ -77,9 +77,6 @@ namespace TenmoClient
                 decimal balance = tenmoApiService.GetBalance();
 
                 Console.WriteLine($"Your current account balance is: {balance.ToString("C")}");
-                
-
-                
                 // View your current balance
             }
 
@@ -96,13 +93,30 @@ namespace TenmoClient
             if (menuSelection == 4)
             {
                 // Send TE bucks
-                List<OtherUser> otherUser = tenmoApiService.GetOtherUsers();
-                currentConsole.PrintOtherUsers(otherUser);
-                int userId = currentConsole.PromptForInteger("Id of the user you are sending to", 0);
-                if(CheckOtherUser(userId, otherUser))
+                try
                 {
-                    decimal moneyToTransfer = currentConsole.PromptForInteger("Enter amount to send", 0);
+                    List<OtherUser> otherUser = tenmoApiService.GetOtherUsers();
+                    currentConsole.PrintOtherUsers(otherUser);
+                    int userId = currentConsole.PromptForInteger("Id of the user you are sending to", 0);
+                    if (CheckOtherUser(userId, otherUser))
+                    {
+                        decimal moneyToTransfer = currentConsole.PromptForInteger("Enter amount to send (press enter to cancel)", 0);
+                        if (moneyToTransfer != 0)
+                        {
+                            tenmoApiService.SendMoney(userId, moneyToTransfer);
+                            currentConsole.PrintSuccess($"You've successfully transfered {moneyToTransfer.ToString("C")} to {otherUser.Find(x => x.UserId == userId).Username}");
+                        }
+                        else
+                        {
+                            currentConsole.PrintError("Transaction has been cancelled.");
+                        }
+                    }
                 }
+                catch (Exception)
+                {
+                    currentConsole.PrintError("Transaction failed.");
+                }
+
 
             }
 

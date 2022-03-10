@@ -38,41 +38,29 @@ namespace TenmoServer.Controllers
                 if(userId == toId)
                 {
                     return StatusCode(400);
-
                 }
                 else if(userDao.GetCash(userId) < money)
                 {
                     return StatusCode(400);
                 }
-                return userDao.TransferMoney(userId, toId, money);
-
+                return userDao.SendMoney(userId, toId, money);
             }
             catch (Exception)
             {
-                return StatusCode(500);
-                
+                return StatusCode(500);   
             }
-
-            
         }
 
         [HttpGet("history")]
         public List<Transfer> ViewTransfers()
         {
-
             int user_Id = Convert.ToInt32(User.FindFirst("sub")?.Value);
             return userDao.ViewTransfers(user_Id);
-
-
         }
         [HttpGet("{id}")]
         public Transfer GetTransferById(int id)
-        {
-
-            
+        {    
             return userDao.GetTransferById(id);
-
-
         }
 
     }
