@@ -10,7 +10,12 @@ namespace TenmoClient.Services
 
         public TenmoApiService(string apiUrl) : base(apiUrl) { }
 
-        // Add methods to call api here...
+        public void SendMoney(int toId, decimal money)
+        {
+            RestRequest request = new RestRequest($"transfer/{toId}/{money}");
+            IRestResponse restResponse = client.Post(request);
+            CheckForError(restResponse);
+        }
 
         public decimal GetBalance()
         {

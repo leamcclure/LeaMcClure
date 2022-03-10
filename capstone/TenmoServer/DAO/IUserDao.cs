@@ -13,7 +13,7 @@ namespace TenmoServer.DAO
 
         List<Transfer> ViewTransfers(int account_id);
 
-        Transfer TransferMoney(int userId, int toId, decimal money);
+        Transfer SendMoney(int userId, int toId, decimal money);
         Transfer GetTransferById(int transferId);
 
     }
