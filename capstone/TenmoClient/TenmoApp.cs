@@ -7,7 +7,7 @@ namespace TenmoClient
 {
     public class TenmoApp
     {
-        private readonly TenmoConsoleService console = new TenmoConsoleService();
+        private readonly TenmoConsoleService currentConsole = new TenmoConsoleService();
         private readonly TenmoApiService tenmoApiService;
 
         public TenmoApp(string apiUrl)
@@ -34,8 +34,8 @@ namespace TenmoClient
 
         private bool RunUnauthenticated()
         {
-            console.PrintLoginMenu();
-            int menuSelection = console.PromptForInteger("Please choose an option", 0, 2, 1);
+            currentConsole.PrintLoginMenu();
+            int menuSelection = currentConsole.PromptForInteger("Please choose an option", 0, 2, 1);
             while (true)
             {
                 if (menuSelection == 0)
@@ -56,15 +56,15 @@ namespace TenmoClient
                     Register();
                     return true;    // Keep the main menu loop going
                 }
-                console.PrintError("Invalid selection. Please choose an option.");
-                console.Pause();
+                currentConsole.PrintError("Invalid selection. Please choose an option.");
+                currentConsole.Pause();
             }
         }
 
         private bool RunAuthenticated()
         {
-            console.PrintMainMenu(tenmoApiService.Username);
-            int menuSelection = console.PromptForInteger("Please choose an option", 0, 6);
+            currentConsole.PrintMainMenu(tenmoApiService.Username);
+            int menuSelection = currentConsole.PromptForInteger("Please choose an option", 0, 6);
             if (menuSelection == 0)
             {
                 // Exit the loop
@@ -73,6 +73,13 @@ namespace TenmoClient
 
             if (menuSelection == 1)
             {
+                Console.Clear();
+                decimal balance = tenmoApiService.GetBalance();
+
+                Console.WriteLine($"Your current account balance is: {balance.ToString("C")}");
+                
+
+                
                 // View your current balance
             }
 
@@ -89,6 +96,14 @@ namespace TenmoClient
             if (menuSelection == 4)
             {
                 // Send TE bucks
+                List<OtherUser> otherUser = tenmoApiService.GetOtherUsers();
+                currentConsole.PrintOtherUsers(otherUser);
+                int userId = currentConsole.PromptForInteger("Id of the user you are sending to", 0);
+                if(CheckOtherUser(userId, otherUser))
+                {
+                    decimal moneyToTransfer = currentConsole.PromptForInteger("Enter amount to send", 0);
+                }
+
             }
 
             if (menuSelection == 5)
@@ -100,15 +115,15 @@ namespace TenmoClient
             {
                 // Log out
                 tenmoApiService.Logout();
-                console.PrintSuccess("You are now logged out");
+                currentConsole.PrintSuccess("You are now logged out");
             }
-
+            currentConsole.Pause();
             return true;    // Keep the main menu loop going
         }
 
         private void Login()
         {
-            LoginUser loginUser = console.PromptForLogin();
+            LoginUser loginUser = currentConsole.PromptForLogin();
             if (loginUser == null)
             {
                 return;
@@ -119,23 +134,23 @@ namespace TenmoClient
                 ApiUser user = tenmoApiService.Login(loginUser);
                 if (user == null)
                 {
-                    console.PrintError("Login failed.");
+                    currentConsole.PrintError("Login failed.");
                 }
                 else
                 {
-                    console.PrintSuccess("You are now logged in");
+                    currentConsole.PrintSuccess("You are now logged in");
                 }
             }
             catch (Exception)
             {
-                console.PrintError("Login failed.");
+                currentConsole.PrintError("Login failed.");
             }
-            console.Pause();
+            currentConsole.Pause();
         }
 
         private void Register()
         {
-            LoginUser registerUser = console.PromptForLogin();
+            LoginUser registerUser = currentConsole.PromptForLogin();
             if (registerUser == null)
             {
                 return;
@@ -145,18 +160,28 @@ namespace TenmoClient
                 bool isRegistered = tenmoApiService.Register(registerUser);
                 if (isRegistered)
                 {
-                    console.PrintSuccess("Registration was successful. Please log in.");
+                    currentConsole.PrintSuccess("Registration was successful. Please log in.");
                 }
                 else
                 {
-                    console.PrintError("Registration was unsuccessful.");
+                    currentConsole.PrintError("Registration was unsuccessful.");
                 }
             }
             catch (Exception)
             {
-                console.PrintError("Registration was unsuccessful.");
+                currentConsole.PrintError("Registration was unsuccessful.");
             }
-            console.Pause();
+            currentConsole.Pause();
         }
+        public bool CheckOtherUser(int userId, List<OtherUser> otherUser)
+        {
+            if (null == otherUser.Find(x => x.UserId == userId))
+            {
+                Console.WriteLine($"{userId} is not a valid user id.");
+                return false;
+            }
+            return true;
+        }
+
     }
 }
