@@ -12,6 +12,22 @@ namespace TenmoClient.Services
 
         // Add methods to call api here...
 
+        public decimal GetBalance()
+        {
+            RestRequest request = new RestRequest("/money");
+            IRestResponse<decimal> restResponse = client.Get<decimal>(request);
+            CheckForError(restResponse);
+            return restResponse.Data;
+        }
+
+        public List<OtherUser> GetOtherUsers()
+        {
+            RestRequest request = new RestRequest("/transfer");
+            IRestResponse<List<OtherUser>> restResponse = client.Get<List<OtherUser>>(request);
+            CheckForError(restResponse);
+            return restResponse.Data;
+        }
+
 
     }
 }

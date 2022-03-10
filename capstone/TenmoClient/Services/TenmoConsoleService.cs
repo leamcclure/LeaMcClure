@@ -52,7 +52,23 @@ namespace TenmoClient.Services
         }
 
         // Add application-specific UI methods here...
+        public void PrintOtherUsers(List<OtherUser> otherUsers)
+        {
+            Console.WriteLine("| --------------Users---------------|");
+            Console.WriteLine("| Id | Username                     |");
+            Console.WriteLine("| -------+--------------------------|");
 
+            foreach(OtherUser user in otherUsers) 
+            {
+                Console.WriteLine($"|  {user.UserId} | {user.Username}");
+            } 
+
+
+
+
+            Console.WriteLine("| ----------------------------------|");
+
+        }
 
     }
 }
