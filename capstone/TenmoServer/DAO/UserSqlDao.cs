@@ -183,9 +183,19 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id, account_from, account_to, amount FROM transfer
-                                                    JOIN account ON account.account_id = transfer.account_from OR account.account_id = transfer.account_to
-                                                    WHERE user_id = @user_id
+                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id, account.user_id AS account_from, (SELECT account.user_id FROM account 
+                                                    WHERE account.user_id = @user_id )AS account_to, amount, transfer_status_id, transfer_type_id
+                                                    FROM transfer
+                                                    JOIN account ON account.account_id = transfer.account_to
+                                                    JOIN tenmo_user ON account.user_id = tenmo_user.user_id
+                                                    WHERE transfer.account_from = (SELECT account_id FROM account WHERE user_id = @user_id)
+                                                    UNION
+                                                    SELECT transfer_id, (SELECT account.user_id FROM account
+                                                    WHERE account.user_id = @user_id ) AS account_from, account.user_id AS account_to, amount, transfer_status_id, transfer_type_id
+                                                    FROM transfer
+                                                    JOIN account ON account.account_id = transfer.account_from
+                                                    JOIN tenmo_user ON account.user_id = tenmo_user.user_id
+                                                    WHERE transfer.account_to = (SELECT account_id FROM account WHERE user_id = @user_id)
                                                     ", conn);
                     cmd.Parameters.AddWithValue("@user_id", user_id);
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -286,8 +296,8 @@ namespace TenmoServer.DAO
 
             Transfer transfer = new Transfer();
             transfer.Id = Convert.ToInt32(reader["transfer_id"]);
-            transfer.TransferFrom = Convert.ToString(reader["account_from"]);
-            transfer.TransferTo = Convert.ToString(reader["account_to"]);
+            transfer.TransferFrom = Convert.ToInt32(reader["account_from"]);
+            transfer.TransferTo = Convert.ToInt32(reader["account_to"]);
             transfer.Amount = Convert.ToDecimal(reader["amount"]);
 
             return transfer;
