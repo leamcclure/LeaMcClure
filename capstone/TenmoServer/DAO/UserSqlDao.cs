@@ -183,8 +183,7 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id, account.user_id AS account_from, (SELECT account.user_id FROM account
-                                                    JOIN transfer ON transfer.account_to = account.account_id
+                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id, account.user_id AS account_from, (SELECT account.user_id FROM account 
                                                     WHERE account.user_id = @user_id )AS account_to, amount, transfer_status_id, transfer_type_id
                                                     FROM transfer
                                                     JOIN account ON account.account_id = transfer.account_to
@@ -192,7 +191,6 @@ namespace TenmoServer.DAO
                                                     WHERE transfer.account_from = (SELECT account_id FROM account WHERE user_id = @user_id)
                                                     UNION
                                                     SELECT transfer_id, (SELECT account.user_id FROM account
-                                                    JOIN transfer ON transfer.account_to = account.account_id
                                                     WHERE account.user_id = @user_id ) AS account_from, account.user_id AS account_to, amount, transfer_status_id, transfer_type_id
                                                     FROM transfer
                                                     JOIN account ON account.account_id = transfer.account_from
