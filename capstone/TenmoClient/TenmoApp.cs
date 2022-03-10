@@ -85,6 +85,18 @@ namespace TenmoClient
 
             if (menuSelection == 2)
             {
+                try
+                {
+                    List<Transfer> transfers = tenmoApiService.ViewTransfers();
+                    currentConsole.ViewTransfers(transfers, tenmoApiService.UserId);
+                    
+                    
+                }
+                catch
+                {
+                    currentConsole.PrintError("Unable to proccess your request!");
+                }
+
                 // View your past transfers
             }
 

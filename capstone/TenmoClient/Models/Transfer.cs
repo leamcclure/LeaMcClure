@@ -9,9 +9,9 @@ namespace TenmoClient.Models
     {
         public int Id { get; set; }
 
-        public string TransferTo { get; set; }
+        public int TransferTo { get; set; }
 
-        public string TransferFrom { get; set; }
+        public int TransferFrom { get; set; }
 
         public decimal Amount { get; set; }
 
@@ -19,7 +19,7 @@ namespace TenmoClient.Models
         {
 
         }
-        public Transfer(int id, string transferTo, string transferFrom, decimal amount)
+        public Transfer(int id, int transferTo, int transferFrom, decimal amount)
         {
             Id = id;
             TransferTo = transferTo;
