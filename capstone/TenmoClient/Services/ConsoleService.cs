@@ -93,6 +93,29 @@ namespace TenmoClient.Services
                 PrintError($"Number is out of range, please try again.");
             }
         }
+        public decimal PromptForDecimal(string message, int? defaultValue = null)
+        {
+            string defaultPrompt = defaultValue.HasValue ? $"[{defaultValue}]: " : ": ";
+            while (true)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write($"{message}{defaultPrompt}");
+                Console.ResetColor();
+                string input = Console.ReadLine();
+
+                // Did the user take the default value?
+                if (input.Trim().Length == 0 && defaultValue.HasValue)
+                {
+                    return defaultValue.Value;
+                }
+
+                if (decimal.TryParse(input, out decimal money))
+                {
+                    return money;
+                }
+                PrintError($"Number is out of range, please try again.");
+            }
+        }
 
         /// <summary>
         /// Display a prompt and read a string from the keyboard.

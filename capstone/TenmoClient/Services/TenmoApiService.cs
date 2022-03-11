@@ -33,7 +33,12 @@ namespace TenmoClient.Services
             return restResponse.Data;
         }
 
-
+        public void RequestMoney(int requestee, decimal money)
+        {
+            RestRequest request = new RestRequest($"transfer/request/{requestee}/{money}");
+            IRestResponse restResponse = client.Post(request);
+            CheckForError(restResponse);
+        }
 
 
 

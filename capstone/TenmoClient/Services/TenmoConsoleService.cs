@@ -84,7 +84,7 @@ namespace TenmoClient.Services
                 }
             }
             Console.WriteLine("| ----------------------------------|");
-            int transferId = PromptForInteger("Please enter transfer ID to view details (0 to cancel):", 0);
+            int transferId = PromptForInteger("Please enter transfer ID to view details (0 to cancel)", 0);
             Transfer displayedTransfer = null;// = transfers.Find(x => x.Id == transferId);
             foreach (Transfer x in transfers)
             {
@@ -118,13 +118,5 @@ namespace TenmoClient.Services
             
 
         }
-
-        //public int ViewTransferDetails(List<TransferDetails> transferDetails)
-        //{
-            
-
-        //}
-
-
     }
 }

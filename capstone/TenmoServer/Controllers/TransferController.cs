@@ -50,6 +50,27 @@ namespace TenmoServer.Controllers
                 return StatusCode(500);   
             }
         }
+        [HttpPost("request/{toId}/{money}")]
+        public ActionResult<Transfer> RequestCash(int toId, decimal money)
+        {
+            int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);
+            try
+            {
+                if (userId == toId)
+                {
+                    return StatusCode(400);
+                }
+                else if (money <= 0)
+                {
+                    return StatusCode(400);
+                }
+                return userDao.RequestMoney(userId, toId, money);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
 
         [HttpGet("history")]
         public List<Transfer> ViewTransfers()

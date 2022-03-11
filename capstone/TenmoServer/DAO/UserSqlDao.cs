@@ -251,7 +251,7 @@ namespace TenmoServer.DAO
                     cmd.Parameters.AddWithValue("@toId", toId);
                     transferId = Convert.ToInt32(cmd.ExecuteScalar());
 
-                    
+
                 }
                 return GetTransferById(transferId);
             }
@@ -260,9 +260,37 @@ namespace TenmoServer.DAO
 
                 throw;
             }
-            
         }
+        public Transfer RequestMoney(int fromId, int toId, decimal money)
+        {
+            int transferId;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(@"BEGIN TRANSACTION;
+                                                    INSERT INTO
+                                                    transfer(account_from, account_to, amount, transfer_status_id, transfer_type_id)
+                                                    OUTPUT INSERTED.transfer_id
+                                                    VALUES ((SELECT account_id FROM account WHERE user_id = @fromId), (SELECT account_id FROM account WHERE user_id = @toId), @money, 1, 1);
+                                                    COMMIT;
+                                                    ", conn);
+                    cmd.Parameters.AddWithValue("@fromId", fromId);
+                    cmd.Parameters.AddWithValue("@money", money);
+                    cmd.Parameters.AddWithValue("@toId", toId);
+                    transferId = Convert.ToInt32(cmd.ExecuteScalar());
 
+
+                }
+                return GetTransferById(transferId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
 
         public Transfer GetTransferById(int transferId)
@@ -278,7 +306,7 @@ namespace TenmoServer.DAO
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    if(reader.Read())
+                    if (reader.Read())
                     {
 
                         return GetTransfersFromReader(reader);
@@ -287,7 +315,7 @@ namespace TenmoServer.DAO
                     {
                         throw new Exception();
                     }
-                    
+
 
                 }
 

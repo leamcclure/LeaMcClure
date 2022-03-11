@@ -15,6 +15,7 @@ namespace TenmoServer.DAO
 
         Transfer SendMoney(int userId, int toId, decimal money);
         Transfer GetTransferById(int transferId);
+        Transfer RequestMoney(int userId, int toId, decimal Money);
 
     }
 }
