@@ -46,13 +46,7 @@ namespace TenmoClient.Services
             return restResponse.Data;
         }
 
-        //public List<TransferDetails> ViewTransferDetails()
-        //{
-        //    RestRequest request = new RestRequest("/transfer/");
-        //    IRestResponse<List<TransferDetails>> restResponse = client.Get<List<TransferDetails>>(request);
-        //    CheckForError(restResponse);
-        //    return restResponse.Data;
-        //}
+        
 
 
     }
