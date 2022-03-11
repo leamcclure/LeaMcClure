@@ -183,28 +183,39 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id, account.user_id AS account_from, (SELECT account.user_id FROM account 
-                                                    WHERE account.user_id = @user_id )AS account_to, amount, transfer_status_id, transfer_type_id
+                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id, account.user_id AS account_from, (SELECT account.user_id FROM account WHERE account.user_id = @user_id )AS account_to,
+                                                    transfer_status_desc, transfer_type_desc, username AS other_user, amount
                                                     FROM transfer
                                                     JOIN account ON account.account_id = transfer.account_to
                                                     JOIN tenmo_user ON account.user_id = tenmo_user.user_id
+                                                    JOIN transfer_status ON transfer_status.transfer_status_id = transfer.transfer_status_id
+                                                    JOIN transfer_type ON transfer_type.transfer_type_id = transfer.transfer_type_id
                                                     WHERE transfer.account_from = (SELECT account_id FROM account WHERE user_id = @user_id)
                                                     UNION
-                                                    SELECT transfer_id, (SELECT account.user_id FROM account
-                                                    WHERE account.user_id = @user_id ) AS account_from, account.user_id AS account_to, amount, transfer_status_id, transfer_type_id
+                                                    SELECT transfer_id, (SELECT account.user_id FROM account WHERE account.user_id = @user_id) AS account_from,
+                                                    account.user_id AS account_to, transfer_status_desc, transfer_type_desc, username AS other_user, amount
                                                     FROM transfer
                                                     JOIN account ON account.account_id = transfer.account_from
                                                     JOIN tenmo_user ON account.user_id = tenmo_user.user_id
-                                                    WHERE transfer.account_to = (SELECT account_id FROM account WHERE user_id = @user_id)
-                                                    ", conn);
+                                                    JOIN transfer_status ON transfer_status.transfer_status_id = transfer.transfer_status_id
+                                                    JOIN transfer_type ON transfer_type.transfer_type_id = transfer.transfer_type_id
+                                                    WHERE transfer.account_to = (SELECT account_id FROM account WHERE user_id = @user_id)", conn);
                     cmd.Parameters.AddWithValue("@user_id", user_id);
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     while (reader.Read())
                     {
-                        Transfer transfer = GetTransfersFromReader(reader);
+                        Transfer transfer = new Transfer();
+                        {
+                            transfer.Id = Convert.ToInt32(reader["transfer_id"]);
+                            transfer.TransferFrom = Convert.ToInt32(reader["account_from"]);
+                            transfer.TransferTo = Convert.ToInt32(reader["account_to"]);
+                            transfer.Status = Convert.ToString(reader["transfer_status_desc"]);
+                            transfer.Type = Convert.ToString(reader["transfer_type_desc"]);
+                            transfer.OtherUserName = Convert.ToString(reader["other_user"]);
+                            transfer.Amount = Convert.ToDecimal(reader["amount"]);
+                        }
                         transferList.Add(transfer);
-
                     }
 
                 }

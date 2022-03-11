@@ -85,7 +85,7 @@ namespace TenmoClient
                 try
                 {
                     List<Transfer> transfers = tenmoApiService.ViewTransfers();
-                    currentConsole.ViewTransfers(transfers, tenmoApiService.UserId);                 
+                    currentConsole.ViewTransfers(transfers, tenmoApiService.UserId, tenmoApiService.Username);  
                 }
                 catch
                 {
@@ -97,6 +97,8 @@ namespace TenmoClient
 
             if (menuSelection == 3)
             {
+
+
                 // View your pending requests
             }
 
