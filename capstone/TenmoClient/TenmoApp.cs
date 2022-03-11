@@ -112,7 +112,7 @@ namespace TenmoClient
                     int userId = currentConsole.PromptForInteger("Id of the user you are sending to", 0);
                     if (CheckOtherUser(userId, otherUser))
                     {
-                        decimal moneyToTransfer = currentConsole.PromptForInteger("Enter amount to send (press enter to cancel)", 0);
+                        decimal moneyToTransfer = currentConsole.PromptForDecimal("Enter amount to send (press enter to cancel)", 0);
                         if (moneyToTransfer != 0)
                         {
                             tenmoApiService.SendMoney(userId, moneyToTransfer);
@@ -134,6 +134,32 @@ namespace TenmoClient
 
             if (menuSelection == 5)
             {
+                try
+                {
+                    List<OtherUser> otherUser = tenmoApiService.GetOtherUsers();
+                    currentConsole.PrintOtherUsers(otherUser);
+                    int userId = currentConsole.PromptForInteger("Id of the user you are requesting money from", 0);
+                    if (CheckOtherUser(userId, otherUser))
+                    {
+                        decimal moneyToTransfer = currentConsole.PromptForDecimal("Enter amount to request (press enter to cancel)", 0);
+                        if (moneyToTransfer != 0)
+                        {
+                            tenmoApiService.RequestMoney(userId, moneyToTransfer);
+                            currentConsole.PrintSuccess($"You've successfully requested {moneyToTransfer.ToString("C")} from {otherUser.Find(x => x.UserId == userId).Username}");
+                        }
+                        else
+                        {
+                            currentConsole.PrintError("Transaction has been cancelled.");
+                        }
+                    }
+
+                }
+                catch
+                {
+                    currentConsole.PrintError("Request failed.");
+                }
+
+
                 // Request TE bucks
             }
 
